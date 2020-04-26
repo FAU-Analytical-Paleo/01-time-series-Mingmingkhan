@@ -152,3 +152,57 @@ fo0103 <- forecast(fit0103,h=20)
 plot(fo0103) # Why cannot I add axes labels?? 
 
 
+######################
+
+# Case 2: - Limit data end to some arbitrary date in the first two weeks of April
+# Choosing April 14, 2020 
+
+endD <- which(date=="X4.14.20") #to find col number of April 14, 2020
+inf04 <- iN[iN(1):endD] #infection rate per day till April 14, 2020
+rec04 <- rN[iN(1):endD] #recovery rate
+dea04 <- dN[iN(1):endD] #death rate
+inds04 <- seq(as.Date("2020-01-22"), as.Date("2020-04-14"), by = "day")
+
+# First differences and gam smoothing
+di04 <- diff(inf04)
+dr04 <- diff(rec04)
+dd04 <- diff(dea04)
+
+d.inds04 <- inds04[-1]
+
+## PLOTTING INFECTIONS, FITTING MODELS
+
+quartz(w=7,h=5)
+plot(d.inds04, di04, col="red", type="l", xlab="Date", ylab = "Number of cases", 
+     main = "Daily Rate of Increase till April 14, 2020", ylim=c(0,10000))
+lines(d.inds04, dr04, col="green")
+lines(d.inds04, dd04, col="brown")
+
+z <- c(1:length(d.inds04))
+fit.gi04 <- gam(di04~s(z))
+fit.gr04 <- gam(dr04~s(z))
+fit.gd04 <- gam(dd04~s(z))
+lines(d.inds04, predict(fit.gi04), col="red")
+lines(d.inds04, predict(fit.gr04), col="green")
+lines(d.inds04, predict(fit.gd04), col="brown")
+legend("topleft",legend = c("Infections", "Recoveries","Fatalities"), 
+       col= c("red", "green", "brown"), lty = 1)
+
+## PLOTTING FORECASTS SINCE TILL APRIL 14, 2020
+
+# forecast for infection rates (classical gam extrapolation)
+
+quartz(w = 8, h = 5)
+op <- par(mfrow=c(1,2))
+
+fore <- 100
+d.pre04 <- predict(fit.gi04, data.frame(z=seq(1,fore)), link="log", type="response")
+inds04 <- seq(as.Date(d.inds04[1]), as.Date(d.inds04[1])+fore-1, by=1)
+
+plot(inds04, d.pre04, type="l", xlab = "Date", ylab = "Number of cases", 
+     main = "GAM Infection: end 14.04.2020")
+
+# forecast for infection rates (Arima)
+fit04 <- auto.arima(di04)
+fo04 <- forecast(fit04,h=20)
+plot(fo04) # Why cannot I add axes labels?? 
