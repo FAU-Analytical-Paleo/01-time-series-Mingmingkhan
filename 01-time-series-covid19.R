@@ -101,7 +101,8 @@ plot(fo) # Why cannot I add axes labels??
 
 # Case 1: Start date from March 1, 2020 
 
-startD <- which(date=="X3.1.20") #to find col number of March 1, 2020
+startD <- colnames(i.country[66,-1])
+startD <- which(startD=="X3.1.20") #to find col number of March 1, 2020
 inf0103 <- iN[startD:length(iN)] #infection rate per day since March 1, 2020
 rec0103 <- rN[startD:length(iN)] #recovery rate
 dea0103 <- dN[startD:length(iN)] #death rate
@@ -157,10 +158,11 @@ plot(fo0103) # Why cannot I add axes labels??
 # Case 2: - Limit data end to some arbitrary date in the first two weeks of April
 # Choosing April 14, 2020 
 
-endD <- which(date=="X4.14.20") #to find col number of April 14, 2020
-inf04 <- iN[iN(1):endD] #infection rate per day till April 14, 2020
-rec04 <- rN[iN(1):endD] #recovery rate
-dea04 <- dN[iN(1):endD] #death rate
+endD <- colnames(i.country[66,-1])
+endD <- which(endD=="X4.14.20") #to find col number of April 14, 2020
+inf04 <- iN[iN[1]:endD] #infection rate per day till April 14, 2020
+rec04 <- rN[iN[1]:endD] #recovery rate
+dea04 <- dN[iN[1]:endD] #death rate
 inds04 <- seq(as.Date("2020-01-22"), as.Date("2020-04-14"), by = "day")
 
 # First differences and gam smoothing
